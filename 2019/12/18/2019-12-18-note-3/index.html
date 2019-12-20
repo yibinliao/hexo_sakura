@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  
+  <title itemprop="name">关于POI导出Excel多级表头带标题与表尾的封装方法 | ナチュラル</title>
+  
+    <link rel="shortcut icon" href="/img/favicon.ico">
+  
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+SerifMerriweather|Merriweather+Sans|Source+Code+Pro|Ubuntu:400,700|Noto+Serif+SC" media="all">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" id="saukra_css-css" href="/css/style.css" type="text/css" media="all">
+  <link rel="stylesheet" href="/css/lib.min.css" media="all">
+  <link rel="stylesheet" href="/css/font.css" media="all">
+  <link rel="stylesheet" href="/css/insight.css" media="all">
+  <link rel="stylesheet" href="/css/jquery.fancybox.min.css" media="all">
+  <link rel="stylesheet" href="/css/zoom.css" media="all">
+  <link rel="stylesheet" type="text/css" href="/css/sharejs.css">
+<!--   <link rel="stylesheet" id="saukra_css-css" href="https://2heng.xin/wp-content/cache/autoptimize/css/autoptimize_ad42a61f4c7d4bdd9f91afcff6b5dda5.css
+" type="text/css" media="all"> -->
+  <script>
+  /*Initial Variables*/
+  var mashiro_option = new Object();
+  var mashiro_global = new Object();
+  mashiro_option.NProgressON = true;
+  /* 
+   * 邮箱信息之类的东西可以填在这里，这些js变量基本都作用于sakura-app.js
+   * 这样的设置仅是为了方便在基于PHP开发的主题中设置js变量，既然移植到了Node上，我想或许可以精简这一逻辑吧
+   */
+  mashiro_option.email_domain = "";
+  mashiro_option.email_name = "";
+  mashiro_option.cookie_version_control = "";
+  mashiro_option.qzone_autocomplete = false;
+  mashiro_option.site_name = "ナチュラルblnp";
+  mashiro_option.author_name = "blnp";
+  mashiro_option.site_url = "http://lyibin.gitee.io/hexo_sakura";
+  mashiro_option.v_appId = "uxygA8bNWrpfwUvb6bMzegq8-gzGzoHsz";
+  mashiro_option.v_appKey = "E4hOT01N1yMBmFGk0koDAj9v";
+  mashiro_option.mathjax = "0";
+  mashiro_option.qq_api_url = "https://api.mashiro.top/qqinfo/"; 
+  mashiro_option.qq_avatar_api_url = "https://api.mashiro.top/qqinfo/";
+
+  // mashiro_option.jsdelivr_css_src = "https://cdn.jsdelivr.net/gh/moezx/cdn@3.4.5/css/lib.min.css";
+  // mashiro_option.float_player_on = true;
+
+  /*End of Initial Variables*/
+  </script>
+  <script type="text/javascript">
+  var bg = "https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(1).jpg.webp,https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(2).jpg.webp,https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(3).jpg.webp,https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(4).jpg.webp,https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(5).jpg.webp,https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(6).jpg.webp,https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(7).jpg.webp,https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(8).jpg.webp".split(",");
+  var bgindex = Math.floor(Math.random()*bg.length);
+  if (!!window.ActiveXObject || "ActiveXObject" in window) { //is IE?
+    alert('朋友，IE浏览器未适配哦~');
+  }
+  </script>
+  <style type="text/css">
+  .hljs-ln{border-collapse:collapse}.hljs-ln td{padding:0}.hljs-ln-n:before{content:attr(data-line-number)}
+  </style>
+  <style type="text/css">.site-top .lower nav{display:block !important;}.author-profile i,.post-like a,.post-share .show-share,.sub-text,.we-info a,span.sitename,.post-more i:hover,#pagination a:hover,.post-content a:hover,.float-content i:hover{color:#FE9600}.feature i,.download,.navigator i:hover,.links ul li:before,.ar-time i,span.ar-circle,.object,.comment .comment-reply-link,.siren-checkbox-radio:checked + .siren-checkbox-radioInput:after{background:#FE9600}::-webkit-scrollbar-thumb{background:#FE9600}.download,.navigator i:hover,.link-title,.links ul li:hover,#pagination a:hover,.comment-respond input[type='submit']:hover{border-color:#FE9600}.entry-content a:hover,.site-info a:hover,.comment h4 a,#comments-navi a.prev,#comments-navi a.next,.comment h4 a:hover,.site-top ul li a:hover,.entry-title a:hover,#archives-temp h3,span.page-numbers.current,.sorry li a:hover,.site-title a:hover,i.iconfont.js-toggle-search.iconsearch:hover,.comment-respond input[type='submit']:hover{color:#FE9600}.comments .comments-main{display:block !important;}.comments .comments-hidden{display:none !important;}background-position:center center;background-attachment:inherit;}
+  </style>
+</head>
+</html>
+<body class="page-template page-template-user page-template-page-analytics page-template-userpage-analytics-php page page-id-1297 chinese-font serif isWebKit">
+  <div class="scrollbar" id="bar">
+  </div>
+  <a href="#" class="cd-top faa-float animated"></a>
+  <section id="main-container">
+    <div class="headertop filter-dot">
+  <div id="banner_wave_1"></div>
+  <div id="banner_wave_2"></div>
+  <figure id="centerbg" class="centerbg">
+    <div class="focusinfo no-select">
+      <div class="header-tou">
+        <a href="http://lyibin.gitee.io/hexo_sakura">
+          <img src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/avatar.png">
+        </a>
+      </div>
+      <div class="header-info">
+        <p>Promises are often like the dust.</p>
+        <div class="top-social_v2">
+          <li id="bg-pre">
+            <img class="flipx" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/next-b.svg">
+          </li>
+          
+            
+              
+                <li>
+                  <a href="http://github.com/yibinliao" target="_blank" class="social-github" title="github">
+                    <img src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/social/github.png">
+                  </a>
+                </li>
+              
+            
+              
+                <li>
+                  <a href="https://weibo.com/p/1005055035417004/home?from=page_100505&amp;mod=TAB#place" target="_blank" class="social-github" title="sina">
+                    <img src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/social/sina.png">
+                  </a>
+                </li>
+              
+            
+              
+                <li>
+                  <a href="https://music.163.com/#/user/home?id=379372220" target="_blank" class="social-github" title="wangyiyun">
+                    <img src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/social/wangyiyun.png">
+                  </a>
+                </li>
+              
+            
+              
+                <li>
+                  <a href="https://www.zhihu.com/people/qian-xin-83-38/activities" target="_blank" class="social-github" title="zhihu">
+                    <img src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/social/zhihu.png">
+                  </a>
+                </li>
+              
+            
+              
+                <li>
+                  <a href="https://www.zhihu.com/people/qian-xin-83-38/activities" target="_blank" class="social-github" title="email">
+                    <img src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/social/email.svg">
+                  </a>
+                </li>
+              
+            
+              
+                <li class="wechat">
+                  <a href="/#">
+                    <img src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/social/wechat.png">
+                  </a>
+                  <div class="wechatInner">
+                    <img src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/social/wechatInfo.png">
+                  </div>
+                </li>
+              
+            
+          
+          <li id="bg-next">
+            <img src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/next-b.svg">
+          </li>
+        </div>
+      </div>
+    </div>
+  </figure>
+  <div id="video-container" style="">
+    <video style="object-fit: fill" id="bgvideo" class="video" video-name="" src="" width="auto" preload="auto">
+    </video>
+    <div id="video-btn" class="loadvideo videolive">
+    </div>
+    <div id="video-add">
+    </div>
+    <div class="video-stu">
+    </div>
+  </div>
+  <div class="headertop-down faa-float animated" onclick="headertop_down()">
+    <span>
+      <i class="fa fa-chevron-down" aria-hidden="true">
+      </i>
+    </span>
+  </div>
+</div>
+    <div id="page" class="site wrapper">
+      <header class="site-header no-select gizle sabit" role="banner">
+  <div class="site-top">
+    <div class="site-branding">
+      <span class="site-title">
+        <span class="logolink moe-mashiro">
+          <a href="/">
+            <span class="sakurasono">ナチュラル</span>
+            <span class="shironeko">blnp</span>
+          </a>
+        </span>
+      </span>
+    </div>
+    <div class="searchbox search-form-submit">
+      <i class="iconfont js-toggle-search iconsearch icon-search">
+      </i>
+    </div>
+    <div id="show-nav" class="showNav mobile-fit">
+      <div class="line line1">
+      </div>
+      <div class="line line2">
+      </div>
+      <div class="line line3">
+      </div>
+    </div>
+    <div class="lower-cantiner">
+      <div class="lower">
+        <nav class="mobile-fit-control hide">
+          <ul id="menu-new" class="menu">
+            
+              <li>
+                <a href="/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-fort-awesome faa-shake" aria-hidden="true"></i>
+                    首页
+                  </span>
+                </a>
+                
+              </li>
+            
+              <li>
+                <a href="/archives">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-archive faa-shake" aria-hidden="true"></i>
+                    归档
+                  </span>
+                </a>
+                
+                  <ul class="sub-menu">
+                    
+                      <li>
+                        <a href="/categories/技术/">
+                          <i class="fa fa-code" aria-hidden="true"></i>
+                          技术
+                        </a>
+                      </li>
+                    
+                  </ul>
+                
+              </li>
+            
+              <li>
+                <a href="javascript:;">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-list-ul faa-vertical" aria-hidden="true"></i>
+                    清单
+                  </span>
+                </a>
+                
+                  <ul class="sub-menu">
+                    
+                      <li>
+                        <a href="/tags/悦读/">
+                          <i class="fa fa-th-list faa-bounce" aria-hidden="true"></i>
+                          书单
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/bangumi/">
+                          <i class="fa fa-film faa-vertical" aria-hidden="true"></i>
+                          番组
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/music/">
+                          <i class="fa fa-headphones" aria-hidden="true"></i>
+                          歌单
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/tags/图集/">
+                          <i class="fa fa-photo" aria-hidden="true"></i>
+                          图集
+                        </a>
+                      </li>
+                    
+                  </ul>
+                
+              </li>
+            
+              <li>
+                <a href="/comment/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-pencil-square-o faa-tada" aria-hidden="true"></i>
+                    留言板
+                  </span>
+                </a>
+                
+              </li>
+            
+              <li>
+                <a href="/links/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-link faa-shake" aria-hidden="true"></i>
+                    友人帐
+                  </span>
+                </a>
+                
+              </li>
+            
+              <li>
+                <a href="/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-leaf faa-wrench" aria-hidden="true"></i>
+                    关于
+                  </span>
+                </a>
+                
+                  <ul class="sub-menu">
+                    
+                      <li>
+                        <a href="/about/">
+                          <i class="fa fa-meetup" aria-hidden="true"></i>
+                          我？
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/theme-sakura/">
+                          <i class="fa iconfont icon-sakura" aria-hidden="true"></i>
+                          主题
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/lab/">
+                          <i class="fa fa-cogs" aria-hidden="true"></i>
+                          Lab
+                        </a>
+                      </li>
+                    
+                  </ul>
+                
+              </li>
+            
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <link rel="stylesheet" type="text/css" href="/css/sharejs.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css">
+<div class="pattern-center-blank"></div>
+
+  <div class="pattern-center single-center">
+    <!-- 有配图默认渲染第一张 -->
+    <div class="pattern-attachment-img lazyload" style="background-image: url(https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/uploads/2019-12-18-note-3.png);" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/uploads/2019-12-18-note-3.png">
+    </div>
+    <header class="pattern-header single-header">
+      <h1 class="entry-title">
+      关于POI导出Excel多级表头带标题与表尾的封装方法</h1>
+      <p class="entry-census">
+        <span>
+          <a href="">
+            <img src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3/img/avatar.png">
+          </a>
+        </span>
+        <span>
+          <a href="">yibin</a>
+        </span>
+        <span class="bull">
+        ·</span>
+        2019-12-18<span class="bull">
+        ·</span>
+      <span id="busuanzi_value_page_pv"></span>次阅读</p>
+    </header>
+  </div>
+
+<div id="content" class="site-content">
+  <div id="primary" class="content-area">
+    <main id="main" class="site-main" role="main">
+      <article id="post-1" class="post-1 post type-post status-publish format-standard has-post-thumbnail hentry category-uncategorized">
+        <div class="toc"></div>
+        <!--<div class="toc-entry-content"><!-- 套嵌目录使用（主要为了支援评论）-->
+        
+        <div class="entry-content">
+          <hr>
+<ul>
+<li><strong>转载请注明作者和出处：<a href="https://blog.csdn.net/qq_37165235" target="_blank" rel="noopener">https://blog.csdn.net/qq_37165235</a></strong></li>
+<li><strong>操作系统：WINDOWS 10</strong></li>
+<li><strong>软件版本：heo+next-5.1.4</strong></li>
+<li><strong>编&emsp;&emsp;者：浅歌余生</strong></li>
+</ul>
+<hr>
+<blockquote>
+<p>前言：关于该方法呢主要是来源于<a href="https://blog.csdn.net/csdn_jy/article/details/84943397" target="_blank" rel="noopener">该博主</a>提供的资料，我主要是稍微修改下并记录。额外添加的内容就是表格标题，理论上支持导出一级、二级、三级等多级表头Excel文档，测试一级、二级是OK的，先上效果图如下： </p>
+</blockquote>
+<p>&emsp;&emsp;<strong>这是导出一级表头的Excel文档效果图：</strong> </p>
+<p><img src="https://liaoyibin.vip/images/2019-12-18-note-3-001.png" alt="image">  </p>
+<p>&emsp;&emsp;<strong>这是导出二级表头的Excel文档效果图：</strong> </p>
+<p><img src="https://liaoyibin.vip/images/2019-12-18-note-3-002.png" alt="image">  </p>
+<h1 id="一级表头的实现"><a href="#一级表头的实现" class="headerlink" title="一级表头的实现"></a>一级表头的实现</h1><p>&emsp;&emsp;首先呢说下一级表头是实现，从简单的开始： </p>
+<blockquote>
+<p>先上工具类封装的统一方法： </p>
+</blockquote>
+<pre><code class="java">package com.ylz.packcommon.common.util;
+
+import com.ylz.bizDo.statisticalReports.vo.Record;
+import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.*;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+
+/***
+ * @ClassName: ExcelUtils
+ * @Description:POI实现导出含多级表头和含有表尾部信息的excel
+ * @Auther: lyb
+ * @Date: 2019/12/17 11:21
+ * @version : V1.0
+ */
+public class ExcelUtils {
+
+    /** 
+    * @Author lyb 
+    * @Description //TODO 多级表头Excel文件导出
+    * @Date 11:24 2019/12/17 
+    * @Param [sheetName, head, dataList, type, tableEndData，out，titles] sheet名,多级表头,导出数据,导出类型,表尾,输出文件对象,首行标题
+    * @return org.apache.poi.xssf.usermodel.XSSFWorkbook 
+    **/ 
+    public static XSSFWorkbook exportMultilevelHeader(String sheetName, String[][] head, List&lt;?&gt; dataList, Class type, String[][] tableEndData, OutputStream out,String titles) {
+        /*变量*/
+        String[] properties;
+        Object[] rowValue;
+        List&lt;Object[]&gt; values;
+        Field[] fields;
+        XSSFCell cell;
+        String vo;
+
+        /*导出Excel*/
+        // 第一步，创建一个workBook，对应一个Excel文件
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        // 表头 标题样式
+        XSSFFont titleFont = wb.createFont();
+        titleFont.setFontName(&quot;微软雅黑&quot;);//字体
+        titleFont.setFontHeightInPoints((short) 15);// 字体大小
+        XSSFCellStyle titleStyle = wb.createCellStyle();
+        titleStyle.setFont(titleFont);
+        titleStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);// 左右居中
+        titleStyle.setVerticalAlignment(XSSFCellStyle.VERTICAL_CENTER);// 上下居中
+        titleStyle.setLocked(true);
+
+        // 第二步，在workBook中添加一个sheet,对应Excel文件中的sheet
+        XSSFSheet sheet = wb.createSheet(sheetName);
+        // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+        XSSFRow row;
+        // 第四步，创建单元格，并设置值表头 设置表头居中
+        //生成一个Style
+        XSSFCellStyle style = wb.createCellStyle();
+        style.setWrapText(true);
+        style.setAlignment(XSSFCellStyle.ALIGN_CENTER);//水平居中
+        style.setVerticalAlignment(XSSFCellStyle.VERTICAL_CENTER);//垂直居中
+
+        int mergerNum = 0; //合并数
+        //添加表格标题
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0,  type.getDeclaredFields().length- 1));
+        row = sheet.createRow(0);//创建一行表格
+        row.setHeight((short) 0x349);//设置高度
+        cell = row.createCell(0);//创建单元格
+        cell.setCellStyle(titleStyle);//设置样式
+        cell.setCellValue(titles);//设置标题
+
+        //给单元格设置值
+        for (int i = 0; i &lt; head.length; i++) {
+            row = sheet.createRow(i+1);
+            row.setHeight((short) 700);
+            for (int j = 0; j &lt; head[i].length; j++) {
+                cell = row.createCell(j);
+                cell.setCellStyle(style);
+                cell.setCellValue(head[i][j]);
+            }
+        }
+        Map&lt;Integer, List&lt;Integer&gt;&gt; map = new HashMap&lt;Integer, List&lt;Integer&gt;&gt;();   // 合并行时要跳过的行列
+        //合并行
+        for (int i = 0; i &lt; head[head.length - 1].length; i++) {
+            if (&quot;&quot;.equals(head[head.length - 1][i])) {
+                for (int j = head.length - 2; j &gt;= 0; j--) {
+                    if (!&quot;&quot;.equals(head[j][i])) {
+                        sheet.addMergedRegion(new CellRangeAddress(j+1, head.length, i, i)); // 合并单元格
+                        break;
+                    } else {
+                        if (map.containsKey(j)) {
+                            List&lt;Integer&gt; list = map.get(j);
+                            list.add(i);
+                            map.put(j, list);
+                        } else {
+                            List&lt;Integer&gt; list = new ArrayList&lt;Integer&gt;();
+                            list.add(i);
+                            map.put(j, list);
+                        }
+                    }
+                }
+            }
+        }
+        //合并列
+        for (int i = 0; i &lt; head.length - 1; i++) {
+            for (int j = 0; j &lt; head[i].length; j++) {
+                List&lt;Integer&gt; list = map.get(i);
+                if (list == null || (list != null &amp;&amp; !list.contains(j))) {
+                    if (&quot;&quot;.equals(head[i][j])) {
+                        mergerNum++;
+                        if (mergerNum != 0 &amp;&amp; j == (head[i].length - 1)) {
+                            sheet.addMergedRegion(new CellRangeAddress(i, i, j - mergerNum, j)); // 合并单元格
+                            mergerNum = 0;
+                        }
+                    } else {
+                        if (mergerNum != 0) {
+                            sheet.addMergedRegion(new CellRangeAddress(i+1, i+1, j - mergerNum - 1, j - 1)); // 合并单元格
+                            mergerNum = 0;
+                        }
+                    }
+                }
+            }
+        }
+        //解析导出类型
+        Class&lt;Record&gt; recordClass = Record.class;
+        if (null == type) {
+            //导出失败
+            return null;
+        } else if (type.equals(recordClass)) {
+            //导出List&lt;Record&gt;
+            //获取Record中包含的properties，用于生成表格头及创建Cell
+            properties = getRecordProperties(dataList, null);
+            vo = &quot;record&quot;;
+        } else {
+            //导出List&lt;Bean&gt;
+            //获取Bean的Field
+            fields = type.getDeclaredFields();
+            properties = getRecordProperties(null, fields);
+            vo = &quot;bean&quot;;
+        }
+
+        if (null == head) {
+            int i = 0;
+            if (head.length &gt; 0) {
+                i = head.length - 1;
+            }
+            head[i] = properties;
+        }
+
+        // 第五步，写入实体数据
+        /*表头行数*/
+        int m = 1;
+        if (head.length &gt; 0) {
+            m = head.length;
+        }
+        values = getRowValue(dataList, properties, vo);
+        for (int i = 0; i &lt; dataList.size(); i++) {
+            row = sheet.createRow(i + m+1); //创建行
+            rowValue = values.get(i);
+            // 第四步，创建单元格，并设置值
+            for (int j = 0; j &lt; properties.length; j++) {
+                cell = row.createCell(j);
+                cell.setCellStyle(style);
+                setCellValue(cell, rowValue[j]);
+            }
+        }
+
+        //第六步，处理表格尾部的数据
+        if (tableEndData != null &amp;&amp; tableEndData.length &gt; 0) {
+            for (int i = 0; i &lt; tableEndData.length; i++) {
+                row = sheet.createRow(dataList.size() + m + i);
+                sheet.addMergedRegion(new CellRangeAddress(dataList.size() + m + i, dataList.size() + m + i, 0,  type.getDeclaredFields().length- 1));
+                for (int j = 0; j &lt; tableEndData[i].length; j++) {
+                    cell = row.createCell(j);
+                    cell.setCellStyle(style);
+                    setCellValue(cell, tableEndData[i][j]);
+                }
+            }
+        }
+        try {
+            wb.write(out);
+            out.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return wb;
+    }
+
+    /** 
+    * @Author lyb 
+    * @Description //TODO 获取Record包含的所有properties 
+    * @Date 11:30 2019/12/17 
+    * @Param [list, fields] 列名,属性
+    * @return java.lang.String[] 包含properties
+    **/ 
+    private static String[] getRecordProperties(List&lt;?&gt; list, Field[] fields) {
+        if (null != list &amp;&amp; null == fields) {
+            Record record = (Record) list.get(0);
+            Set&lt;String&gt; keySet = record.keySet();
+            List&lt;String&gt; keysList = new ArrayList&lt;&gt;(keySet);
+            return keysList.toArray(new String[keysList.size()]);
+        } else if (null != fields &amp;&amp; null == list) {
+            String[] properties = new String[fields.length];
+            for (int i = 0; i &lt; fields.length; i++) {
+                properties[i] = fields[i].getName();
+            }
+            return properties;
+        }
+        return new String[0];
+    }
+
+    /** 
+    * @Author lyb 
+    * @Description //TODO 转换列表数据
+    * @Date 11:33 2019/12/17 
+    * @Param [list, properties, vo] 数据列表,属性列表,类型
+    * @return java.util.List&lt;java.lang.Object[]&gt; 转换后的数据
+    **/ 
+    private static List&lt;Object[]&gt; getRowValue(List&lt;?&gt; list, String[] properties, String vo) {
+        List&lt;Object[]&gt; resultList = new ArrayList&lt;&gt;();
+        Record record;
+        if (StringUtils.isBlank(vo)) {
+            return resultList;
+        }
+        else if (&quot;record&quot;.equals(vo)) {
+            for (Object object : list) {
+                record = (Record) object;
+                Object[] values = new Object[properties.length];    //定义在外部数组值会被最后写入的覆盖
+                for (int i = 0; i &lt; properties.length; i++) {
+
+                    values[i] = record.get(properties[i]);
+
+                }
+                resultList.add(values);
+            }
+            return resultList;
+        }
+        else if (&quot;bean&quot;.equals(vo)) {
+            for (Object object : list) {
+                Class cf = object.getClass();
+                Object[] values = new Object[properties.length];    //定义在外部数组值会被最后写入的覆盖
+                for (int i = 0; i &lt; properties.length; i++) {
+                    char[] name = properties[i].toCharArray();
+                    name[0] -= 32;
+                    try {
+                        Method method = cf.getMethod(&quot;get&quot; + String.valueOf(name));
+                        values[i] = method.invoke(object);
+                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                }
+                resultList.add(values);
+            }
+            return resultList;
+        }
+        return resultList;
+    }
+
+    /** 
+    * @Author lyb 
+    * @Description //TODO 设置单元格值
+    * @Date 11:34 2019/12/17 
+    * @Param [cell, value] 单元格,值
+    * @return void 
+    **/ 
+    private static void setCellValue(XSSFCell cell, Object value) {
+        if (value instanceof String) {
+            cell.setCellValue((String) value);
+            cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+        } else if (value instanceof Date) {
+            cell.setCellValue((Date) value);
+            cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+        } else if (value instanceof Boolean) {
+            cell.setCellValue((Boolean) value);
+            cell.setCellType(XSSFCell.CELL_TYPE_BOOLEAN);
+        } else if (value instanceof Double) {
+            cell.setCellValue((Double) value);
+            cell.setCellType(XSSFCell.CELL_TYPE_NUMERIC);
+        } else if (value instanceof Calendar) {
+            cell.setCellValue((Calendar) value);
+            cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+        } else if (value instanceof RichTextString) {
+            cell.setCellValue((RichTextString) value);
+            cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+        } else {
+            cell.setCellValue(String.valueOf(value));
+            cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+        }
+    }
+
+    /**
+    * @Author lyb
+    * @Description //TODO 测试方法
+    * @Date 13:26 2019/12/19
+    * @Param [args]
+    * @return void
+    **/
+    public static void main(String[] args) throws Exception{
+//        //标题
+//        String titles=&quot;小脆皮&quot;;
+//
+//        //表头名
+//        String[][] headNames = {{"鲁班","小乔","安琪拉","甑姬","王昭君"}};
+//
+//        //表尾名
+//        String[][] tableEnd = {{"不准看：    "}};
+//
+//        List&lt;Testvo&gt; list = new ArrayList&lt;&gt;();
+//        for (int i=0;i&lt;5;i++) {
+//            Testvo vo=new Testvo();
+//            vo.setNo(&quot;1&quot;);
+//            vo.setName(&quot;鲁班大师&quot;);
+//            vo.setSex(&quot;男&quot;);
+//            vo.setAge(26);
+//            vo.setMoney(&quot;13888&quot;);
+//            list.add(vo);
+//        }
+//
+//        OutputStream out = new FileOutputStream(&quot;C:\\Users\\lyb\\Desktop\\测试汇总表.xls&quot;);
+//
+//        //导出
+//        exportMultilevelHeader(&quot;测试汇总&quot;,headNames,list,Testvo.class,tableEnd,out,titles);
+
+    }
+}
+
+</code></pre>
+<p>&emsp;&emsp;<strong><span style="color:red;">这里有一个类需要说明下，就是Record类进行重写了，作用其实就是中间接收我们需导出数据的实体类属性，该类贴码如下：</span></strong> </p>
+<pre><code class="java">package com.ylz.bizDo.statisticalReports.vo;
+
+/***
+ * @ClassName: Record
+ * @Description:该类用于POI多级表头Excel文件导出,用于接收导出实体属性
+ * @Auther: lyb
+ * @Date: 2019/12/17 11:30
+ * @version : V1.0
+ */
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.LinkedHashMap;
+
+public class Record extends LinkedHashMap&lt;String,Object&gt; {
+    public void set(String field,Object value){
+        put(field,value);
+    }
+    public String getString(String field){
+        return (String)get(field);
+    }
+    public Integer getInteger(String field){
+        return (Integer)get(field);
+    }
+    public Long getLong(String field){
+        return (Long)get(field);
+    }
+    public BigDecimal getBigDecimal(String field){
+        return (BigDecimal)get(field);
+    }
+    public Date getDate(String field){
+        return (Date)get(field);
+    }
+    public Boolean getBoolean(String field){
+        return (Boolean) get(field);
+    }
+}
+
+</code></pre>
+<p>&emsp;&emsp;然后呢就是一级表头文档导出的测试方法了： </p>
+<pre><code class="java">    public static void main(String[] args) throws Exception{
+        //标题
+        String titles=&quot;小脆皮&quot;;
+
+        //表头名
+        String[][] headNames = {{"鲁班","小乔","安琪拉","甑姬","王昭君"}};
+
+        //表尾名
+        String[][] tableEnd = {{"不准看：    "}};
+
+        List&lt;Testvo&gt; list = new ArrayList&lt;&gt;();
+        for (int i=0;i&lt;5;i++) {
+            Testvo vo=new Testvo();
+            vo.setNo(&quot;1&quot;);
+            vo.setName(&quot;鲁班大师&quot;);
+            vo.setSex(&quot;男&quot;);
+            vo.setAge(26);
+            vo.setMoney(&quot;13888&quot;);
+            list.add(vo);
+        }
+
+        OutputStream out = new FileOutputStream(&quot;C:\\Users\\lyb\\Desktop\\测试汇总表.xls&quot;);
+
+        //导出
+        exportMultilevelHeader(&quot;测试汇总&quot;,headNames,list,Testvo.class,tableEnd,out,titles);
+
+    }
+</code></pre>
+<p>&emsp;&emsp;至于TestVo类就不需要我贴了吧，只是一个测试类只有get、set方法，属性就循环的那些。 </p>
+<hr>
+<p>&emsp;&emsp;至于二级表头的测试方法如下，主要内容都在工具类里面。基本上都有写注释相信应该可以看明白。 </p>
+<pre><code class="java">    /**
+     * @Author lyb
+     * @Description //TODO 家庭签约登记统计Excel导出
+     * @Date 9:43 2019/12/17
+     * @Param []
+     * @return java.lang.String
+     **/
+    public String findRegistrationStatisticalToExcel() {
+        try {
+            //查询条件
+            RegistrationListQvo qvo = (RegistrationListQvo) getJsonLay(RegistrationListQvo.class);
+            if(qvo==null){
+                qvo=new RegistrationListQvo();
+            }
+            //登录人信息
+            CdUser user = this.getSessionUser();
+            //导出数据
+            List&lt;RegistrationStatisticalExportVo&gt; listData = sysDao.getStattisticalReportsDao().registrationListExport(qvo);
+            //Excel导出标题
+            String titles = &quot;登记表&quot;;
+            //表头名
+            String[][] headNames = {{"姓名","性别","身份证号","联系电话","签约编码","签约家庭类别", "", "", "", "","","", "重点人群签约服务项目", "","","","","","", "其他人群", "","","","","签约服务包类型","备注"},
+                    {"","","","","","计生失独伤残家庭", "计生独生子女", "计生双女", "五保户", "低保户","建档立卡贫困人口","其他", "老年人","高血压患者","2型糖尿病患者","严重精神障碍患者","结核病患者","孕产妇","0-6岁儿童", "残疾人", "脑血管病患者", "冠心病患者","癌症患者","其他","",""}};
+
+            //表尾名
+            String[][] tableEnd = {{"填报人:          分管院长：                填报时间：    年    月    日"}};
+            getResponse().reset();
+            getResponse().setContentType(&quot;application/vnd..ms-excel&quot;);
+            getResponse().setHeader(&quot;content-Disposition&quot;,&quot;attachment;filename=&quot;+ URLEncoder.encode(&quot;汇总表.xls&quot;,&quot;utf-8&quot;));
+            ExcelUtils.exportMultilevelHeader(&quot;汇总表&quot;,headNames,listData, RegistrationStatisticalExportVo.class,tableEnd,getResponse().getOutputStream(),titles);
+        }catch (Exception e) {
+            e.printStackTrace();
+            new ActionException(getClass(), getAct(), getJsons(), e);
+        }
+        return null;
+    }
+</code></pre>
+<p><strong>代码什么的都已经贴完了，也没别的东西了。</strong> </p>
+<hr>
+<p><strong><font color="red" size="3" face="仿宋">本次记录到此结束，欢迎订阅、关注、收藏、评论、点赞哦～～(￣▽￣～)～</font></strong></p>
+<p><strong><font color="red" size="3" face="仿宋">哇咔咔(∪｡∪)｡｡｡zzz</font></strong></p>
+
+        </div>
+        <!-- .entry-content -->
+        <div class="single-reward">
+          <div class="reward-open">赏
+            <div class="reward-main">
+              <ul class="reward-row">
+                <li class="alipay-code"><img src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/custom/AliPayQR.jpg"></li>
+                <li class="wechat-code"><img src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/custom/WeChanSQ.png"></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center; width: 100%" class="social-share share-mobile" data-disabled="diandian, tencent"></div>
+        <footer class="post-footer">
+          <div class="post-lincenses"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="nofollow"><i class="fa fa-creative-commons" aria-hidden="true"></i> 知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a></div>
+          <div class="post-tags">
+          </div>
+          <div class="post-share">
+            <div class="social-share sharehidden share-component"></div>
+            <i class="iconfont show-share icon-forward"></i>
+          </div>
+        </footer><!-- .entry-footer -->
+      </article>
+      <!-- #post-## -->
+      <div class="toc" style="background: none;"></div>
+      <section class="post-squares nextprev">
+        
+        
+          
+            <div class="post-nepre full next">
+          
+            <a href="/2019/12/18/2019-12-18-note-2/" rel="next">
+              <div class="background">
+                <img class="lazyload" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/uploads/2019-12-18-note-2.png" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/uploads/2019-12-18-note-2.png">
+              </div>
+              <span class="label">
+              Next Post</span>
+              <div class="info">
+                <h3>
+                关于layUI多级表头</h3>
+                <hr>
+              </div>
+            </a>
+          </div>
+        
+      </section>
+      
+<div id="vcomments"></div>
+<script>
+  window.onload = function(){
+      var valine = new Valine();
+      valine.init({
+        el: '#vcomments',
+        appId: "uxygA8bNWrpfwUvb6bMzegq8-gzGzoHsz",
+        appKey: "E4hOT01N1yMBmFGk0koDAj9v",
+        path: window.location.pathname,
+        placeholder: "你是我一生只会遇见一次的惊喜 ..."
+      })
+  }
+</script>
+
+      <section class="author-profile">
+        <div class="info" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+          <a href="" class="profile gravatar"><img src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3/img/avatar.png" itemprop="image" alt="yibin" height="70" width="70"></a>
+          <div class="meta">
+            <span class="title">Author</span>
+            <h3 itemprop="name">
+            <a href="" itemprop="url" rel="author">yibin</a>
+            </h3>
+          </div>
+        </div>
+        <hr>
+        <p><i class="iconfont icon-write"></i>一个闲得无聊的人</p>
+      </section>
+    </main><!-- #main -->
+  </div><!-- #primary -->
+</div>
+
+
+
+    </div>    
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="请输入关键词..."/>
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            // PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+    <!-- <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 liaoyibin<br>
+      powered_by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer> -->
+<footer id="colophon" class="site-footer" role="contentinfo">
+  <div class="site-info">
+    <div class="footertext">
+      <div class="img-preload">
+        <img src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/wordpress-rotating-ball-o.svg">
+        <img src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/disqus-preloader.svg">
+      </div>
+      <p style="color: #666666;">&copy 2018</p>
+    </div>
+    <div class="footer-device">
+    <p style="font-family: 'Ubuntu', sans-serif;">
+        <span style="color: #b9b9b9;">Theme <a href="https://github.com/honjun/hexo-theme-sakura" target="_blank" style="color: #b9b9b9;;text-decoration: underline dotted rgba(0, 0, 0, .1);">Sakura</a> <i class="iconfont icon-sakura rotating" style="color: #ffc0cb;display:inline-block"></i> by <a href="https://2heng.xin/" target="_blank" style="color: #b9b9b9;;text-decoration: underline dotted rgba(0, 0, 0, .1);">Mashiro</a>&<a href="https://www.hojun.cn/" target="_blank" style="color: #b9b9b9;;text-decoration: underline dotted rgba(0, 0, 0, .1);">Hojun</a>, Powered by Hexo, Hosted by Coding Pages</a>
+        </span>
+      </p>
+    </div>
+  </div><!-- .site-info -->
+</footer>
+
+
+
+<!-- <script src="/js/tocbot.js"></script> -->
+<script type="text/javascript" src="/js/lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script type="text/javascript" src="/js/InsightSearch.js"></script>
+<script type="text/javascript" src="/js/jquery.fancybox.min.js"></script>
+<script type="text/javascript" src="/js/zoom.min.js"></script>
+<script type="text/javascript" src="/js/sakura-app.js"></script>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine@1.3.4/dist/Valine.min.js'></script>
+<script src="/js/botui.js"></script>
+<!-- 不蒜子 网页计数器 -->
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script> -->
+<script type="text/javascript">
+/* <![CDATA[ */
+if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+  var Poi = {"pjax":"1","movies":{"url": "https://cdn.jsdelivr.net/gh/honjun/hojun@1.2","name":"Unbroken.mp4","live":"close"},"windowheight":"fixed","codelamp":"close","ajaxurl":"","order":"asc","formpostion":"bottom"};
+} else {
+  var Poi = {"pjax":"1","movies":{"url": "https://cdn.jsdelivr.net/gh/honjun/hojun@1.2","name":"Unbroken.mp4","live":"open"},"windowheight":"auto","codelamp":"close","ajaxurl":"","order":"asc","formpostion":"bottom"};
+}
+/* ]]> */
+
+</script>
+<script>
+$(document).ready(function() {
+  if ($(".toc").length > 0 && document.body.clientWidth > 1200) {
+    if ($(".pattern-center").length > 0) { //有图的情况
+      tocbot.init({
+          // Where to render the table of contents.
+          tocSelector: '.toc', // 放置目录的容器
+          // Where to grab the headings to build the table of contents.
+          contentSelector: '.entry-content', // 正文内容所在
+          // Which headings to grab inside of the contentSelector element.
+          scrollSmooth: true,
+          headingSelector: 'h1, h2, h3, h4, h5', // 需要索引的标题级别
+          headingsOffset: -400,
+          scrollSmoothOffset: -85
+      });
+    } else {
+      tocbot.init({
+          // Where to render the table of contents.
+          tocSelector: '.toc', // 放置目录的容器
+          // Where to grab the headings to build the table of contents.
+          contentSelector: '.entry-content', // 正文内容所在
+          // Which headings to grab inside of the contentSelector element.
+          scrollSmooth: true,
+          headingSelector: 'h1, h2, h3, h4, h5', // 需要索引的标题级别
+          headingsOffset: -85,
+          scrollSmoothOffset: -85
+      });
+    }
+    var offsetTop = $('.toc').offset().top - 95;
+    window.onscroll = function() {
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+      if (scrollTop >= offsetTop) {
+        $('.toc').addClass('toc-fixed');
+      } else {
+        $('.toc').removeClass('toc-fixed');
+      }
+    }
+  }
+});
+</script>
+
+    <div class="openNav no-select" style="height: 50px;">
+      <div class="iconflat no-select" style="width: 50px; height: 50px;">
+        <div class="icon"></div>
+      </div>
+      <div class="site-branding search-form-submit">
+        <i class="iconfont js-toggle-search iconsearch icon-search"></i>
+      </div>
+    </div>
+  </section>
+  <div id="mo-nav" class="">
+  <div class="m-avatar">
+    <img src="https://cdn.jsdelivr.net/gh/yibinliao/CDN@v1.3.1/img/avatar.png">
+  </div>
+  <p style="text-align: center; color: #333; font-weight: 900; font-family: 'Ubuntu', sans-serif; letter-spacing: 1.5px">ナチュラルblnp</p>
+  <p style="text-align: center; word-spacing: 20px;">
+    
+      
+        <a href="http://github.com/yibinliao" class="fa fa-github" target="_blank" style="color: #333; margin-left:20px"></a>
+      
+        <a href="https://weibo.com/p/1005055035417004/home?from=page_100505&mod=TAB#place" class="fa fa-weibo" target="_blank" style="color: #dd4b39; margin-left:20px"></a>
+      
+        <a href="https://wpa.qq.com/msgrd?v=3&uin=2045165565&site=qq&menu=yes" class="fa fa-qq" target="_blank" style="color: #25c6fe; margin-left:20px"></a>
+      
+    
+  </p>
+  <ul id="menu-new-1" class="menu">
+    
+      <li>
+        <a href="/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-fort-awesome faa-shake" aria-hidden="true"></i>
+            首页
+          </span>
+        </a>
+        
+      </li>
+    
+      <li>
+        <a href="/archives">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-archive faa-shake" aria-hidden="true"></i>
+            归档
+          </span>
+        </a>
+        
+          <ul class="sub-menu">
+            
+              <li>
+                <a href="/categories/技术/">
+                  <i class="fa fa-code" aria-hidden="true"></i>
+                  技术
+                </a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      <li>
+        <a href="javascript:;">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-list-ul faa-vertical" aria-hidden="true"></i>
+            清单
+          </span>
+        </a>
+        
+          <ul class="sub-menu">
+            
+              <li>
+                <a href="/tags/悦读/">
+                  <i class="fa fa-th-list faa-bounce" aria-hidden="true"></i>
+                  书单
+                </a>
+              </li>
+            
+              <li>
+                <a href="/bangumi/">
+                  <i class="fa fa-film faa-vertical" aria-hidden="true"></i>
+                  番组
+                </a>
+              </li>
+            
+              <li>
+                <a href="/music/">
+                  <i class="fa fa-headphones" aria-hidden="true"></i>
+                  歌单
+                </a>
+              </li>
+            
+              <li>
+                <a href="/tags/图集/">
+                  <i class="fa fa-photo" aria-hidden="true"></i>
+                  图集
+                </a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      <li>
+        <a href="/comment/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-pencil-square-o faa-tada" aria-hidden="true"></i>
+            留言板
+          </span>
+        </a>
+        
+      </li>
+    
+      <li>
+        <a href="/links/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-link faa-shake" aria-hidden="true"></i>
+            友人帐
+          </span>
+        </a>
+        
+      </li>
+    
+      <li>
+        <a href="/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-leaf faa-wrench" aria-hidden="true"></i>
+            关于
+          </span>
+        </a>
+        
+          <ul class="sub-menu">
+            
+              <li>
+                <a href="/about/">
+                  <i class="fa fa-meetup" aria-hidden="true"></i>
+                  我？
+                </a>
+              </li>
+            
+              <li>
+                <a href="/theme-sakura/">
+                  <i class="fa iconfont icon-sakura" aria-hidden="true"></i>
+                  主题
+                </a>
+              </li>
+            
+              <li>
+                <a href="/lab/">
+                  <i class="fa fa-cogs" aria-hidden="true"></i>
+                  Lab
+                </a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+  </ul>
+  <p style="text-align: center; font-size: 13px; color: #b9b9b9;">&copy 2019 hexo-sakura</p>
+</div>
+<button onclick="topFunction()" class="mobile-cd-top" id="moblieGoTop" title="Go to top" style="display: none;"><i class="fa fa-chevron-up" aria-hidden="true"></i></button>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+<script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+<!-- require MetingJS -->
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+<style>
+  .aplayer .aplayer-lrc {
+    height: 35px;
+  }
+  .aplayer .aplayer-lrc p{
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 18px !important;
+  }
+  .aplayer .aplayer-lrc p.aplayer-lrc-current{
+    color: #FF1493;
+  }
+  .aplayer.aplayer-narrow .aplayer-body{
+    left: -66px !important;
+  }
+  .aplayer.aplayer-fixed .aplayer-lrc {
+    display: none;
+  }
+  .aplayer .aplayer-lrc.aplayer-lrc-hide {
+      display:none !important;
+  }
+  .aplayer.aplayer-fixed .lrc-show {
+    display: block;
+    background: rgba(255, 255, 255, 0.8);
+  }
+</style>
+<meting-js
+
+    id="2660651585"
+
+    server="netease"
+
+    type="playlist"
+
+    fixed="true"
+
+    autoplay="false"
+
+    loop="all"
+
+    order="random"
+
+    preload="auto"
+
+    volume="0.7"
+
+    mutex="true"
+
+</meting-js>
+<script>
+  $(function(){
+    $('body').on('click', '.aplayer', function(){
+      if($('.aplayer-button').hasClass('aplayer-play')) {
+        $('.aplayer-lrc').removeClass('lrc-show');
+      } else {
+        $('.aplayer-lrc').addClass('lrc-show');
+      }
+    })
+  });
+</script>
+</body>
+</html>
